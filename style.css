@@ -3,5 +3,14 @@
 }
 
 .sudoku__cell {
-    fill: #fff;
+    fill: #efefef;
+}
+
+.sudoku__cell--editable {
+    fill: #ffffff;
+    cursor: pointer;
+}
+
+.sudoku__cell-text {
+    font: 28px Helvetica, Arial, Verdana, sans-serif;
 }
