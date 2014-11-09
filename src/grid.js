@@ -1,7 +1,6 @@
-var component = require('omniscient'),
-    Immutable = require('immutable'),
-    qwery = require('qwery'),
-    React = require('react');
+var component = require('omniscient');
+var Immutable = require('immutable');
+var React = require('react/addons');
 
 var CELL_SIZE = 30,
     BORDER_SIZE = 1;
@@ -12,21 +11,27 @@ function position(a) {
 }
 
 var Cell = component(function (props) {
+    var value = props.cursor.get('value');
+
     return React.DOM.rect({
         x: position(props.x),
         y: position(props.y),
         width: CELL_SIZE,
         height: CELL_SIZE,
-        className: "sudoku__cell"
+        className: React.addons.classSet({
+            "sudoku__cell": true,
+            "sudoku__cell--editable": props.cursor.get('editable')
+        })
     });
 });
 
-var Grid = component(function () {
+var Grid = component(function (props) {
     var cells = Immutable.Range(0, 9).flatMap(function (x) {
         return Immutable.Range(0, 9).map(function (y) {
             return Cell(x + "_" + y, {
                 x: x,
-                y: y
+                y: y,
+                cursor: props.cursor.get(x).get(y)
             });
         });
     });
@@ -45,5 +50,5 @@ var Grid = component(function () {
     }, background, cells.toJS());
 });
 
-React.render(Grid(), qwery('.js-sudoku')[0]);
+module.exports = Grid;
 
