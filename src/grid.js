@@ -1,6 +1,6 @@
-var component = require('omniscient');
-var Immutable = require('immutable');
-var React = require('react/addons');
+var component = require('omniscient'),
+    Immutable = require('immutable'),
+    React = require('react/addons');
 
 var CELL_SIZE = 30,
     BORDER_SIZE = 1,
@@ -46,18 +46,16 @@ var Grid = component(function (props) {
         });
     });
 
-    var background = React.DOM.rect({
+    return React.DOM.svg({
+        width: position(9),
+        height: position(9)
+    }, React.DOM.rect({
         x: 0,
         y: 0,
         width: position(9),
         height: position(9),
         className: "sudoku__background"
-    });
-
-    return React.DOM.svg({
-        width: position(9),
-        height: position(9)
-    }, background, cells.toJS());
+    }), cells.toJS());
 });
 
 module.exports = Grid;

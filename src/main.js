@@ -1,7 +1,7 @@
-var immstruct = require('immstruct');
-var qwery = require('qwery');
-var React = require('react/addons');
-var Grid = require('./grid.js');
+var immstruct = require('immstruct'),
+    qwery = require('qwery'),
+    React = require('react/addons'),
+    Grid = require('./grid.js');
 
 var puzzle = [
     [null, 2, null, 5, null, null, null, 4, null],
