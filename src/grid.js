@@ -11,10 +11,6 @@ function position(a) {
         a * (CELL_SIZE + BORDER_SIZE);
 }
 
-function gridSize(n) {
-    return position(n) + BORDER_SIZE;
-}
-
 var Cell = component(function (props) {
     return React.DOM.rect({
         x: position(props.x),
@@ -38,14 +34,14 @@ var Grid = component(function () {
     var background = React.DOM.rect({
         x: 0,
         y: 0,
-        width: gridSize(9),
-        height: gridSize(9),
+        width: position(9),
+        height: position(9),
         className: "sudoku__background"
     });
 
     return React.DOM.svg({
-        width: gridSize(9),
-        height: gridSize(9)
+        width: position(9),
+        height: position(9)
     }, background, cells.toJS());
 });
 
