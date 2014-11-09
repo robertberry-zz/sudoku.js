@@ -23,16 +23,23 @@ var structure = immstruct({
                 editable: entry === null
             };
         });
-    })
+    }),
+    // for testing
+    focus: {
+        x: 3,
+        y: 3
+    }
 });
 
 function render() {
     React.render(
-        Grid(structure.cursor('cells')),
+        Grid({
+            cells: structure.cursor('cells'),
+            focus: structure.cursor('focus')
+        }),
         qwery('.js-sudoku')[0]
     );
 }
-
 
 structure.on('swap', render);
 

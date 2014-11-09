@@ -11,6 +11,11 @@
     cursor: pointer;
 }
 
+.sudoku__cell--highlighted {
+    fill: #f5ffcf;
+}
+
 .sudoku__cell-text {
     font: 28px Helvetica, Arial, Verdana, sans-serif;
 }
+

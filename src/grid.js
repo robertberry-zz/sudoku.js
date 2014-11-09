@@ -23,7 +23,8 @@ var Cell = component(function (props) {
             height: CELL_SIZE,
             className: React.addons.classSet({
                 "sudoku__cell": true,
-                "sudoku__cell--editable": props.cursor.get('editable')
+                "sudoku__cell--editable": props.cursor.get('editable'),
+                "sudoku__cell--highlighted": props.isHighlighted
             })
         }), value ? [
             React.DOM.text({
@@ -35,13 +36,35 @@ var Cell = component(function (props) {
     );
 });
 
+function highlights(focusX, focusY) {
+    var focusSquareX = Math.floor(focusX / 3),
+        focusSquareY = Math.floor(focusY / 3);
+
+    return function (x, y) {
+        var squareX = Math.floor(x / 3),
+            squareY = Math.floor(y / 3);
+
+        return x == focusX ||
+            y == focusY ||
+            squareX == focusSquareX && squareY == focusSquareY;
+    };
+}
+
+function fConst(a) {
+    return function () {
+        return a;
+    };
+};
+
 var Grid = component(function (props) {
-    var cells = Immutable.Range(0, 9).flatMap(function (x) {
+    var isHighlighted = props.focus ? highlights(props.focus.get('x'), props.focus.get('y')) : fConst(false),
+        cells = Immutable.Range(0, 9).flatMap(function (x) {
         return Immutable.Range(0, 9).map(function (y) {
             return Cell(x + "_" + y, {
                 x: x,
                 y: y,
-                cursor: props.cursor.get(x).get(y)
+                isHighlighted: isHighlighted(x, y),
+                cursor: props.cells.get([x, y])
             });
         });
     });
