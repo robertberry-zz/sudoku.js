@@ -1,4 +1,5 @@
 var component = require('omniscient'),
+    EventEmitter = require('events').EventEmitter,
     Immutable = require('immutable'),
     React = require('react/addons');
 
@@ -12,25 +13,38 @@ function position(a) {
         a * (CELL_SIZE + BORDER_SIZE);
 }
 
-var Cell = component(function (props) {
-    var value = props.cursor.get('value');
+var Cell = component(function (props, statics) {
+    var x = props.cursor.get('x'),
+        y = props.cursor.get('y'),
+        value = props.cursor.get('value');
+
+    function onClick(e) {
+        statics.events.emit('click', {
+            x: x,
+            y: y
+        });
+    }
 
     return React.DOM.g({}, 
         React.DOM.rect({
-            x: position(props.x),
-            y: position(props.y),
+            x: position(x),
+            y: position(y),
             width: CELL_SIZE,
             height: CELL_SIZE,
             className: React.addons.classSet({
                 "sudoku__cell": true,
                 "sudoku__cell--editable": props.cursor.get('editable'),
-                "sudoku__cell--highlighted": props.isHighlighted
-            })
+                "sudoku__cell--highlighted": props.cursor.get('highlighted'),
+                "sudoku__cell--focussed": props.cursor.get('focussed')
+            }),
+            onClick: onClick
         }), value ? [
             React.DOM.text({
-                x: position(props.x) + TEXT_X_OFFSET,
-                y: position(props.y) + TEXT_Y_OFFSET,
-                className: "sudoku__cell-text"
+                key: "text",
+                x: position(x) + TEXT_X_OFFSET,
+                y: position(y) + TEXT_Y_OFFSET,
+                className: "sudoku__cell-text",
+                onClick: onClick
             }, value)
         ] : []
     );
@@ -56,15 +70,48 @@ function fConst(a) {
     };
 };
 
-var Grid = component(function (props) {
-    var isHighlighted = props.focus ? highlights(props.focus.get('x'), props.focus.get('y')) : fConst(false),
-        cells = Immutable.Range(0, 9).flatMap(function (x) {
-        return Immutable.Range(0, 9).map(function (y) {
-            return Cell(x + "_" + y, {
-                x: x,
-                y: y,
-                isHighlighted: isHighlighted(x, y),
-                cursor: props.cells.get([x, y])
+var events = new EventEmitter();
+
+function mapCells(grid, f) {
+    return grid.map(function (column) {
+        return column.map(f);
+    });
+}
+
+var Grid = component({
+    componentDidMount: function () {
+        var self = this,
+            cells = this.props.cells;
+
+        function focusCell(position) {
+            var isHighlighted = highlights(position.x, position.y);
+
+            cells.update(function (state) {
+                return mapCells(state, function (cell) {
+                    return cell.merge({
+                        focussed: cell.get('x') === position.x && cell.get('y') === position.y,
+                        highlighted: isHighlighted(cell.get('x'), cell.get('y'))
+                    });
+                });
+            });
+
+            self.focus = cells.get([position.x, position.y]);
+        }
+
+        events.on('click', focusCell);
+    },
+
+    componentWillUnmount: function () {
+        events.removeAllListeners();
+    }
+}, function (props) {
+    var cells = props.cells.flatMap(function (column) {
+        return column.map(function (cell) {
+            return Cell(cell.get('x') + "_" + cell.get('y'), {
+                cursor: cell,
+                statics: {
+                    events: events
+                }
             });
         });
     });

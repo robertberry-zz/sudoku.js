@@ -16,32 +16,28 @@ var puzzle = [
 ];
 
 var structure = immstruct({
-    cells: puzzle.map(function (column) {
-        return column.map(function (entry) {
+    cells: puzzle.map(function (column, x) {
+        return column.map(function (entry, y) {
             return {
+                x: x,
+                y: y,
                 value: entry,
                 editable: entry === null
             };
         });
-    }),
-    // for testing
-    focus: {
-        x: 3,
-        y: 3
-    }
+    })
 });
 
 function render() {
     React.render(
         Grid({
-            cells: structure.cursor('cells'),
-            focus: structure.cursor('focus')
+            cells: structure.cursor('cells')
         }),
         qwery('.js-sudoku')[0]
     );
 }
 
-structure.on('swap', render);
+structure.on('next-animation-frame', render);
 
 render();
 

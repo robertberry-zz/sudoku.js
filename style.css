@@ -4,18 +4,23 @@
 
 .sudoku__cell {
     fill: #efefef;
+    cursor: pointer;
 }
 
 .sudoku__cell--editable {
     fill: #ffffff;
-    cursor: pointer;
 }
 
 .sudoku__cell--highlighted {
     fill: #f5ffcf;
 }
 
+.sudoku__cell--focussed {
+    fill: #D6FBFF;
+}
+
 .sudoku__cell-text {
+    cursor: pointer;
     font: 28px Helvetica, Arial, Verdana, sans-serif;
 }
 
