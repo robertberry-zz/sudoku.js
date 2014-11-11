@@ -136,7 +136,8 @@ var Grid = component({
             return mapCells(state, function (cell) {
                 return cell.merge({
                     focussed: false,
-                    highlighted: false
+                    highlighted: false,
+                    sameValue: false
                 });
             });
         });
