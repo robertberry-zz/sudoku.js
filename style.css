@@ -2,20 +2,20 @@
 
 }
 
-.sudoku__cell {
-    fill: #efefef;
+.sudoku__cell rect {
+    fill: #ffffff;
     cursor: pointer;
 }
 
-.sudoku__cell--editable {
-    fill: #ffffff;
+.sudoku__cell--not-editable .sudoku__cell-text {
+    font-weight: bold;
 }
 
-.sudoku__cell--highlighted {
+.sudoku__cell--highlighted rect {
     fill: #f5ffcf;
 }
 
-.sudoku__cell--focussed {
+.sudoku__cell--focussed rect {
     fill: #D6FBFF;
 }
 

@@ -1,6 +1,7 @@
 var component = require('omniscient'),
     EventEmitter = require('events').EventEmitter,
     Immutable = require('immutable'),
+    bind = require('lodash.bind'),
     React = require('react/addons');
 
 var CELL_SIZE = 30,
@@ -25,18 +26,19 @@ var Cell = component(function (props, statics) {
         });
     }
 
-    return React.DOM.g({}, 
+    return React.DOM.g({
+        className: React.addons.classSet({
+            "sudoku__cell": true,
+            "sudoku__cell--not-editable": !props.cursor.get('editable'),
+            "sudoku__cell--highlighted": props.cursor.get('highlighted'),
+            "sudoku__cell--focussed": props.cursor.get('focussed')
+        })
+    }, 
         React.DOM.rect({
             x: position(x),
             y: position(y),
             width: CELL_SIZE,
             height: CELL_SIZE,
-            className: React.addons.classSet({
-                "sudoku__cell": true,
-                "sudoku__cell--editable": props.cursor.get('editable'),
-                "sudoku__cell--highlighted": props.cursor.get('highlighted'),
-                "sudoku__cell--focussed": props.cursor.get('focussed')
-            }),
             onClick: onClick
         }), value ? [
             React.DOM.text({
@@ -79,26 +81,35 @@ function mapCells(grid, f) {
 }
 
 var Grid = component({
-    componentDidMount: function () {
-        var self = this,
+    focusCell: function (position) {
+        var isHighlighted = highlights(position.x, position.y),
             cells = this.props.cells;
 
-        function focusCell(position) {
-            var isHighlighted = highlights(position.x, position.y);
-
-            cells.update(function (state) {
-                return mapCells(state, function (cell) {
-                    return cell.merge({
-                        focussed: cell.get('x') === position.x && cell.get('y') === position.y,
-                        highlighted: isHighlighted(cell.get('x'), cell.get('y'))
-                    });
+        cells.update(function (state) {
+            return mapCells(state, function (cell) {
+                return cell.merge({
+                    focussed: cell.get('x') === position.x && cell.get('y') === position.y,
+                    highlighted: isHighlighted(cell.get('x'), cell.get('y'))
                 });
             });
+        });
 
-            self.focus = cells.get([position.x, position.y]);
-        }
+        this.focus = cells.get([position.x, position.y]);
+    },
 
-        events.on('click', focusCell);
+    blurCell: function () {
+        this.props.cells.update(function (state) {
+            return mapCells(state, function (cell) {
+                return cell.merge({
+                    focussed: false,
+                    highlighted: false
+                });
+            });
+        });
+    },
+
+    componentDidMount: function () {
+        events.on('click', bind(this.focusCell, this));
     },
 
     componentWillUnmount: function () {
@@ -118,7 +129,9 @@ var Grid = component({
 
     return React.DOM.svg({
         width: position(9),
-        height: position(9)
+        height: position(9),
+        tabIndex: "0",
+        onBlur: this.blurCell
     }, React.DOM.rect({
         x: 0,
         y: 0,
