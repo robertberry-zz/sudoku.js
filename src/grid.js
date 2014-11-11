@@ -167,7 +167,8 @@ var Grid = component({
         height: position(9),
         tabIndex: "0",
         onBlur: this.blurCell,
-        onKeyDown: this.onKeyDown
+        onKeyDown: this.onKeyDown,
+        className: "sudoku__grid"
     }, React.DOM.rect({
         x: 0,
         y: 0,

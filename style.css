@@ -1,3 +1,7 @@
+.sudoku__grid {
+    outline: none;
+}
+
 .sudoku__background {
 
 }
