@@ -66,12 +66,6 @@ function highlights(focusX, focusY) {
     };
 }
 
-function fConst(a) {
-    return function () {
-        return a;
-    };
-};
-
 var events = new EventEmitter();
 
 function mapCells(grid, f) {
