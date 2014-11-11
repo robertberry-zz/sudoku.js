@@ -7,7 +7,11 @@ var component = require('omniscient'),
 var CELL_SIZE = 30,
     BORDER_SIZE = 1,
     TEXT_X_OFFSET = 7,
-    TEXT_Y_OFFSET = 25;
+    TEXT_Y_OFFSET = 25,
+    KEY_LEFT = 37,
+    KEY_UP = 38
+    KEY_RIGHT = 39,
+    KEY_DOWN = 40;
 
 function position(a) {
     return (Math.floor(a / 3) + 2) * BORDER_SIZE +
@@ -91,6 +95,39 @@ var Grid = component({
         this.focus = cells.get([position.x, position.y]);
     },
 
+    onKeyDown: function (event) {
+        var x, y;
+
+        if (this.focus) {
+            x = this.focus.get('x');
+            y = this.focus.get('y');
+
+            if (event.keyCode === KEY_LEFT && x > 0) {
+                this.focusCell({
+                    x: x - 1,
+                    y: y
+                });
+            } else if (event.keyCode === KEY_RIGHT && x < 8) {
+                this.focusCell({
+                    x: x + 1,
+                    y: y
+                });
+            } else if (event.keyCode === KEY_UP && y > 0) {
+                this.focusCell({
+                    x: x,
+                    y: y - 1
+                });
+            } else if (event.keyCode === KEY_DOWN && y < 8) {
+                this.focusCell({
+                    x: x,
+                    y: y + 1
+                });
+            }
+        }
+
+        event.preventDefault();
+    },
+
     blurCell: function () {
         this.props.cells.update(function (state) {
             return mapCells(state, function (cell) {
@@ -125,7 +162,8 @@ var Grid = component({
         width: position(9),
         height: position(9),
         tabIndex: "0",
-        onBlur: this.blurCell
+        onBlur: this.blurCell,
+        onKeyDown: this.onKeyDown
     }, React.DOM.rect({
         x: 0,
         y: 0,
