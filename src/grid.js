@@ -35,7 +35,8 @@ var Cell = component(function (props, statics) {
             "sudoku__cell": true,
             "sudoku__cell--not-editable": !props.cursor.get('editable'),
             "sudoku__cell--highlighted": props.cursor.get('highlighted'),
-            "sudoku__cell--focussed": props.cursor.get('focussed')
+            "sudoku__cell--focussed": props.cursor.get('focussed'),
+            "sudoku__cell--same-value": props.cursor.get('sameValue')
         })
     }, 
         React.DOM.rect({
@@ -81,13 +82,15 @@ function mapCells(grid, f) {
 var Grid = component({
     focusCell: function (position) {
         var isHighlighted = highlights(position.x, position.y),
-            cells = this.props.cells;
+            cells = this.props.cells,
+            valueInFocus = this.props.cells.get([position.x, position.y]).get('value');
 
         cells.update(function (state) {
             return mapCells(state, function (cell) {
                 return cell.merge({
                     focussed: cell.get('x') === position.x && cell.get('y') === position.y,
-                    highlighted: isHighlighted(cell.get('x'), cell.get('y'))
+                    highlighted: isHighlighted(cell.get('x'), cell.get('y')),
+                    sameValue: valueInFocus && cell.get('value') === valueInFocus
                 });
             });
         });
